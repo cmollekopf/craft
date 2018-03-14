@@ -212,6 +212,10 @@ class SetupHelper(object):
         self.prependEnvVar("LD_LIBRARY_PATH", [os.path.join(CraftStandardDirs.craftRoot(), "lib"),
                                              os.path.join(CraftStandardDirs.craftRoot(), "lib", "x86_64-linux-gnu")])
         if OsUtils.isMac():
+            if CraftCore.settings.getboolean("QtSDK", "Enabled", "false"):
+                self.prependEnvVar("PATH",
+                                os.path.join(CraftCore.settings.get("QtSDK", "Path"), CraftCore.settings.get("QtSDK", "Version"),
+                                            CraftCore.settings.get("QtSDK", "Compiler"), "bin"))
             self.prependEnvVar("DYLD_LIBRARY_PATH", [os.path.join(CraftStandardDirs.craftRoot(), "lib")])
 
     def _setupWin(self):
@@ -269,6 +273,7 @@ class SetupHelper(object):
         if OsUtils.isWin():
             self._setupWin()
         else:
+            self._setupUnix()
             self.setXDG()
 
         self.prependEnvVar("PKG_CONFIG_PATH", os.path.join(CraftStandardDirs.craftRoot(), "lib", "pkgconfig"))

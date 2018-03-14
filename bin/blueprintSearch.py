@@ -12,6 +12,7 @@ class SeachPackage(object):
         self.webpage = package.subinfo.webpage
         self.description = package.subinfo.description
         self.tags = package.subinfo.tags
+        self.package = package
 
         versions = list(package.subinfo.svnTargets.keys()) + list(package.subinfo.targets.keys())
         versions.sort(key=lambda x: CraftVersion(x))
