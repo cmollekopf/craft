@@ -207,7 +207,7 @@ class ArchiveSource(SourceBase):
                     return False
             # we cant use the same name if we have more than one file to diff
             if len(packagelist) == 1 and patches[-1][0]:
-                patchName = os.path.join(self.buildRoot(), patches[-1][0])
+                patchName = os.path.join(self.packageDir(), patches[-1][0])
 
         # move the packages up and rename them to be different from the original source directory
         for directory in packagelist:
@@ -225,7 +225,7 @@ class ArchiveSource(SourceBase):
         for directory in packagelist:
             if not patchName:
                 date = str(datetime.date.today()).replace("-", "")
-                _patchName = os.path.join(self.buildRoot(), f"{directory}-{date}.diff")
+                _patchName = os.path.join(self.packageDir(), f"{directory}-{date}.diff")
             else:
                 _patchName = patchName
 
