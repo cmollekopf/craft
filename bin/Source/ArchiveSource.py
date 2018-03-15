@@ -6,6 +6,7 @@ from Source.SourceBase import *
 from Utils import CraftHash
 
 from CraftCore import CraftCore
+from CraftOS.osutils import OsUtils
 
 
 class ArchiveSource(SourceBase):
@@ -155,9 +156,10 @@ class ArchiveSource(SourceBase):
     def createPatch(self):
         """ unpacking all zipped(gz, zip, bz2) tarballs a second time and making a patch """
 
-        diffExe = os.path.join(self.rootdir, "dev-utils", "bin", "diff.exe")
-        if not os.path.exists(diffExe):
-            CraftCore.log.critical("could not find diff tool, please run 'craft diffutils'")
+        if OsUtils.isWin():
+            diffExe = os.path.join(self.rootdir, "dev-utils", "bin", "diff.exe")
+            if not os.path.exists(diffExe):
+                CraftCore.log.critical("could not find diff tool, please run 'craft diffutils'")
 
         # get the file paths of the tarballs
         filenames = self.localFileNames()
