@@ -5,7 +5,8 @@ class subinfo(info.infoclass):
     def setTargets(self):
         for ver in ["2017.12", "master"]:
             self.svnTargets[ver] = f"git://anongit.kde.org/craft|{ver}|"
-        self.defaultTarget = "master"
+        self.svnTargets["kube"] = f"[git]https://github.com/cmollekopf/craft|kube|"
+        self.defaultTarget = "kube"
 
     def setDependencies(self):
         self.buildDependencies["dev-util/git"] = "default"
