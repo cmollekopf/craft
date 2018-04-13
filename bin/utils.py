@@ -100,26 +100,20 @@ def getFile(url, destdir, filename='') -> bool:
     if os.path.exists(os.path.join(destdir, filename)):
         return True
 
-    if CraftCore.cache.findApplication("powershell"):
-        powershell = CraftCore.cache.findApplication("powershell")
-        filename = os.path.join(destdir, filename)
-        return system([powershell, "-NoProfile", "-Command",
-                       f"(new-object net.webclient).DownloadFile('{url}', '{filename}')"])
-    else:
-        def dlProgress(count, blockSize, totalSize):
-            if totalSize != -1:
-                percent = int(count * blockSize * 100 / totalSize)
-                printProgress(percent)
-            else:
-                sys.stdout.write(("\r%s bytes downloaded" % (count * blockSize)))
-                sys.stdout.flush()
+    def dlProgress(count, blockSize, totalSize):
+        if totalSize != -1:
+            percent = int(count * blockSize * 100 / totalSize)
+            printProgress(percent)
+        else:
+            sys.stdout.write(("\r%s bytes downloaded" % (count * blockSize)))
+            sys.stdout.flush()
 
-        try:
-            urllib.request.urlretrieve(url, filename=os.path.join(destdir, filename),
-                                       reporthook=dlProgress if CraftCore.debug.verbose() >= 0 else None)
-        except Exception as e:
-            CraftCore.log.warning(e)
-            return False
+    try:
+        urllib.request.urlretrieve(url, filename=os.path.join(destdir, filename),
+                                    reporthook=dlProgress if CraftCore.debug.verbose() >= 0 else None)
+    except Exception as e:
+        CraftCore.log.warning(e)
+        return False
 
     if CraftCore.debug.verbose() >= 0:
         sys.stdout.write("\n")
