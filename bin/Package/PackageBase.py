@@ -86,6 +86,10 @@ class PackageBase(CraftBase):
             CraftCore.log.debug(f"Skipping stripping of files on macOS -- not implemented")
             return True
 
+        if OsUtils.isWin():
+            CraftCore.log.debug(f"Skipping stripping of files on macOS -- not implemented")
+            return True
+
         if os.path.isabs(fileName):
             filepath = fileName
         else:
