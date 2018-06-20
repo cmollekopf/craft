@@ -12,12 +12,20 @@ class MacDMGPackager( CollectionPackagerBase ):
         self.defines.setdefault("apppath", "")
         self.defines.setdefault("appname", self.package.name.lower())
 
+
+    def macdeployqt(self, appPath, targetLibdir, env):
+        if not utils.systemWithoutShell(["dylibbundler", "-of", "-b", "-p", "@executable_path/../Frameworks", "-d", targetLibdir, "-x", f"{appPath}/Contents/MacOS/{self.defines['appname']}"], env=env):
+            CraftCore.log.warning("Failed to run dylibbundler")
+
+        if not utils.systemWithoutShell(["macdeployqt", appPath,  "-always-overwrite", "-dmg", "-verbose=2"], env=env):
+            CraftCore.log.warning("Failed to run macdeployqt!")
+
+
     def createPackage(self):
         """ create a package """
         CraftCore.log.debug("packaging using the MacDMGPackager")
 
         self.internalCreatePackage()
-        self.preArchive()
 
         self._setDefaults()
 
@@ -37,11 +45,8 @@ class MacDMGPackager( CollectionPackagerBase ):
 
         env = os.environ
         env['DYLD_LIBRARY_PATH'] = os.path.join(CraftStandardDirs.craftRoot(), "lib")
-        if not utils.systemWithoutShell(["dylibbundler", "-of", "-b", "-p", "@executable_path/../Frameworks", "-d", targetLibdir, "-x", f"{appPath}/Contents/MacOS/{self.defines['appname']}"], env=env):
-            CraftCore.log.warning("Failed to run dylibbundler")
 
-        if not utils.systemWithoutShell(["macdeployqt", appPath,  "-always-overwrite", "-dmg", "-verbose=2"], env=env):
-            CraftCore.log.warning("Failed to run macdeployqt!")
+        self.macdeployqt(appPath, targetLibdir, env);
 
         dmgSrc = appPath.replace(".app", ".dmg")
         dmgDest = os.path.join(self.packageDestinationDir(), os.path.basename(dmgSrc))
