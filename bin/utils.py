@@ -713,7 +713,13 @@ def putenv(name, value):
 
 def applyPatch(sourceDir, f, patchLevel='0'):
     """apply single patch"""
-    cmd = ["patch", "--ignore-whitespace", "-d", sourceDir, "-p", str(patchLevel), "-i", f]
+
+    if OsUtils.isWin():
+        # The --binary option on windows allows us to work with patches that don't have CR-LF line endings.
+        # The option is only available on windows. https://sourceforge.net/p/gnuwin32/discussion/general/thread/59954e91/
+        cmd = ["patch", "--ignore-whitespace", "--binary", "-d", sourceDir, "-p", str(patchLevel), "-i", f]
+    else:
+        cmd = ["patch", "--ignore-whitespace", "-d", sourceDir, "-p", str(patchLevel), "-i", f]
     result = system(cmd)
     if not result:
         CraftCore.log.warning("applying %s failed!" % f)
